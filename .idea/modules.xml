@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/spritesheetgen.iml" filepath="$PROJECT_DIR$/.idea/spritesheetgen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/tape.iml" filepath="$PROJECT_DIR$/.idea/tape.iml" />
     </modules>
   </component>
 </project>
