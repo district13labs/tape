@@ -7,7 +7,10 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 type Manager struct {
@@ -64,11 +67,30 @@ func listFiles(path string) []string {
 	var names []string
 
 	for _, f := range files {
+		ok, err := regexp.MatchString(`.*-\d.`, f.Name())
+		if err != nil {
+			panic(err)
+		}
+		if !ok {
+			continue
+		}
 		names = append(names, f.Name())
 	}
 
 	sort.Slice(names, func(i int, j int) bool {
-		return names[i] < names[j]
+		// Assuming that the pngs are separated by a "-".
+		fp := strings.Split(names[i], "-")
+		sp := strings.Split(names[j], "-")
+
+		fi, err := strconv.Atoi(strings.TrimSuffix(fp[1], ".png"))
+		if err != nil {
+			panic(err)
+		}
+		si, err := strconv.Atoi(strings.TrimSuffix(sp[1], ".png"))
+		if err != nil {
+			panic(err)
+		}
+		return fi < si
 	})
 
 	return names
