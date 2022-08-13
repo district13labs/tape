@@ -6,3 +6,5 @@ build-linux:
 	GOOS=linux go build -o ./bin/linux/tape ./internal/main.go
 build:
 	go build -o ./bin/macOs/tape ./internal/main.go
+install: build
+	mv ./bin/macOs/tape /usr/local/bin

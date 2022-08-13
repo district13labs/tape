@@ -16,10 +16,10 @@ import (
 type Manager struct {
 	basePath string
 	images   []string
-	size     uint
+	size     int
 }
 
-func (f Manager) OpenImageByIndex(index uint) *os.File {
+func (f Manager) OpenImageByIndex(index int) *os.File {
 	path := fmt.Sprintf("%s/%s", f.basePath, f.images[index])
 	fileImage, err := os.Open(path)
 	if err != nil {
@@ -29,7 +29,7 @@ func (f Manager) OpenImageByIndex(index uint) *os.File {
 	return fileImage
 }
 
-func (f Manager) Size() uint {
+func (f Manager) Size() int {
 	return f.size
 }
 
@@ -54,7 +54,7 @@ func New(basePath string) *Manager {
 	return &Manager{
 		basePath: basePath,
 		images:   files,
-		size:     uint(len(files)),
+		size:     len(files),
 	}
 }
 

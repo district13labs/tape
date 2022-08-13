@@ -1,6 +1,7 @@
 package imagemanager
 
 import (
+	"fmt"
 	"image"
 	"log"
 	"math"
@@ -11,8 +12,8 @@ import (
 type SpriteSheet struct {
 	Width             uint
 	Height            uint
-	SpriteByLine      uint
-	TotalSprites      uint
+	SpriteByLine      int
+	TotalSprites      int
 	SpriteSize        uint
 	fm                *file.Manager
 	OutputSpriteSheet *ImageManager
@@ -25,13 +26,15 @@ func NewSpriteSheet(fm *file.Manager, width uint) *SpriteSheet {
 		TotalSprites: fm.Size(),
 		fm:           fm,
 	}
+	spriteSheet.calcSpriteSize()
+	size := int(spriteSheet.SpriteSize)
 	spriteSheet.OutputSpriteSheet = &ImageManager{
 		image.NewRGBA(
 			image.Rectangle{
-				Min: image.ZP,
+				Min: image.Point{},
 				Max: image.Point{
-					X: int(spriteSheet.Width),
-					Y: int(spriteSheet.Height),
+					X: size * spriteSheet.TotalSprites,
+					Y: size,
 				},
 			},
 		),
@@ -43,9 +46,13 @@ func NewSpriteSheet(fm *file.Manager, width uint) *SpriteSheet {
 }
 
 func (s *SpriteSheet) calcSpriteSize() {
-	overflow := uint(4)
-	maxWidth := uint(math.Round(float64(s.Width / s.TotalSprites)))
-	maxHeight := uint(math.Round(float64(s.Height/2))) - overflow
+	f := s.fm.OpenImageByIndex(0)
+	img, _, _ := image.Decode(f)
+	width := img.Bounds().Size().Y
+	fmt.Println(width * s.TotalSprites)
+
+	maxWidth := uint(math.Round(float64(width)))
+	maxHeight := uint(math.Round(float64(width)))
 
 	dif := maxHeight - maxWidth
 
@@ -57,13 +64,13 @@ func (s *SpriteSheet) calcSpriteSize() {
 }
 
 func (s *SpriteSheet) calMaxSpriteByLine() {
-	s.SpriteByLine = uint(math.Floor(float64(s.Width / s.SpriteSize)))
+	s.SpriteByLine = int(math.Floor(float64(s.Width / s.SpriteSize)))
 }
 
 func (s *SpriteSheet) PlotSprites() {
 	log.Printf("Ploting %v sprites of size: %v in sprite sheet of size %v\n", s.TotalSprites, s.SpriteSize, s.Width)
 	var x, y uint
-	for i := uint(0); i < s.TotalSprites; i++ {
+	for i := 0; i < s.TotalSprites; i++ {
 		fileImg := s.fm.OpenImageByIndex(i)
 
 		if i > 0 && i%s.SpriteByLine == 0 {
